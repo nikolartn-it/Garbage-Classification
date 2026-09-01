@@ -1,0 +1,22 @@
+{
+  "baseline": {
+    "name": "baseline",
+    "status": "completed"
+  },
+  "larger_model": {
+    "name": "larger_model",
+    "status": "completed"
+  },
+  "high_dropout": {
+    "name": "high_dropout",
+    "status": "completed"
+  },
+  "no_augmentation": {
+    "name": "no_augmentation",
+    "status": "completed"
+  },
+  "higher_lr": {
+    "name": "higher_lr",
+    "status": "completed"
+  }
+}

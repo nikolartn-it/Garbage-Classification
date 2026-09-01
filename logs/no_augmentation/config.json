@@ -1,0 +1,11 @@
+{
+  "name": "no_augmentation",
+  "image_size": 224,
+  "batch_size": 32,
+  "learning_rate": 0.001,
+  "weight_decay": 0.0001,
+  "num_epochs": 30,
+  "model": "cnn_baseline",
+  "augmentation": false,
+  "dropout": 0.5
+}

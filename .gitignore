@@ -29,6 +29,3 @@ models/*.pth
 models/*.pt
 
 # Generated logs and results
-logs/*
-results/*
-experiments/*
