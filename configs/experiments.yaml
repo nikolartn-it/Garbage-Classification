@@ -1,0 +1,53 @@
+# 5 eksperimenata za Garbage Classification
+
+experiments:
+  - name: baseline
+    image_size: 224
+    batch_size: 32
+    learning_rate: 0.001
+    weight_decay: 0.0001
+    num_epochs: 30
+    dropout: 0.5
+    augmentation: true
+    description: "Baseline CNN model"
+
+  - name: larger_model
+    image_size: 224
+    batch_size: 32
+    learning_rate: 0.001
+    weight_decay: 0.0001
+    num_epochs: 30
+    dropout: 0.5
+    augmentation: true
+    filters: [64, 128, 256, 512]
+    description: "Larger CNN with more filters"
+
+  - name: high_dropout
+    image_size: 224
+    batch_size: 32
+    learning_rate: 0.001
+    weight_decay: 0.0001
+    num_epochs: 30
+    dropout: 0.7
+    augmentation: true
+    description: "Higher dropout for regularization"
+
+  - name: no_augmentation
+    image_size: 224
+    batch_size: 32
+    learning_rate: 0.001
+    weight_decay: 0.0001
+    num_epochs: 30
+    dropout: 0.5
+    augmentation: false
+    description: "No data augmentation"
+
+  - name: higher_lr
+    image_size: 224
+    batch_size: 32
+    learning_rate: 0.005
+    weight_decay: 0.0001
+    num_epochs: 30
+    dropout: 0.5
+    augmentation: true
+    description: "Higher learning rate"
