@@ -1,0 +1,34 @@
+# Dataset
+data/raw/
+data/processed/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Machine learning models
+models/*.h5
+models/*.keras
+models/*.pth
+models/*.pt
+
+# Generated logs and results
+logs/*
+results/*
+experiments/*
