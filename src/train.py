@@ -43,7 +43,7 @@ class Config:
     # Hiperparametri
     IMAGE_SIZE = 224
     BATCH_SIZE = 32
-    NUM_EPOCHS = 10
+    NUM_EPOCHS = 30
     LEARNING_RATE = 1e-3
     WEIGHT_DECAY = 1e-4
     NUM_WORKERS = 4
