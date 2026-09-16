@@ -22,7 +22,7 @@ from sklearn.metrics import (
 from torch.utils.data import DataLoader
 
 from data_pipeline import create_dataloaders, get_class_names
-from model_architecture import create_model
+from model_architecture import Model, create_model
 from split_dataset import load_splits
 
 
@@ -39,17 +39,17 @@ class Config:
     DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def load_model(model_path: Path, num_classes: int) -> nn.Module:
-    """Ucitava sacuvani model."""
-    model = create_model(num_classes=num_classes)
-    checkpoint = torch.load(model_path, map_location=Config.DEVICE)
-    model.load_state_dict(checkpoint["model_state_dict"])
-    model.to(Config.DEVICE)
+def load_model(model_path, num_classes):
+    model = Model(num_classes=num_classes)
+    checkpoint = torch.load(model_path, map_location='cpu')
+    
+    # Podrska za oba formata: cist state_dict ili checkpoint dict
+    if isinstance(checkpoint, dict) and "model_state_dict" in checkpoint:
+        model.load_state_dict(checkpoint["model_state_dict"])
+    else:
+        model.load_state_dict(checkpoint)
+    
     model.eval()
-    
-    print(f"✓ Model loaded from {model_path}")
-    print(f"  Best val_acc: {checkpoint.get('val_acc', 'N/A')}")
-    
     return model
 
 

@@ -27,5 +27,8 @@ models/*.h5
 models/*.keras
 models/*.pth
 models/*.pt
+mlflow.db
+mlruns/
+
 
 # Generated logs and results
