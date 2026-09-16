@@ -2,11 +2,11 @@
 
 **Klasifikacija vrsta otpada primenom konvolutivnih neuronskih mreža (CNN)**
 
-Seminarski rad iz predmeta *Veštačka inteligencija sa primenama*.
+ *Veštačka inteligencija sa primenama*.
 
 ---
 
-## 📋 Opis projekta
+##  Opis projekta
 
 Projekat predstavlja kompletan sistem za automatsku klasifikaciju šest vrsta otpada na osnovu slika, koristeći konvolutivnu neuronsku mrežu (CNN) implementiranu u PyTorch-u. Sistem obuhvata:
 
@@ -43,7 +43,7 @@ Korišćen je **Garbage Classification** dataset sa [Kaggle](https://www.kaggle.
 
 ---
 
-## 🧠 Arhitektura modela
+##  Arhitektura modela
 
 ```
 Conv2d(3 → 32, kernel=3, padding=1) + BatchNorm + ReLU + MaxPool
@@ -62,7 +62,7 @@ Linear(256 → 6)
 
 ---
 
-## 📈 Rezultati
+##  Rezultati
 
 Izvršeno je **5 eksperimenata** sa različitim konfiguracijama. Svi modeli su trenirani na istom train/val/test splitu (1768/379/380 slika).
 
@@ -73,7 +73,7 @@ Izvršeno je **5 eksperimenata** sa različitim konfiguracijama. Svi modeli su t
 | baseline | 0.7045 | 0.6737 | 390.918 | Osnovna konfiguracija (30 epoha) |
 | larger_model | 0.6781 | 0.6474 | 1.555.974 | Više filtera (64→512) |
 | high_dropout | 0.6623 | 0.6184 | 390.918 | Dropout 0.7 |
-| **no_augmentation** ⭐ | **0.7335** | **0.7316** | 390.918 | Bez augmentacije podataka |
+| **no_augmentation**  | **0.7335** | **0.7316** | 390.918 | Bez augmentacije podataka |
 | higher_lr | 0.6201 | 0.5895 | 390.918 | Learning rate 0.005 |
 
 **Najbolji model:** `no_augmentation` sa **73.16%** test tačnosti.
@@ -118,7 +118,7 @@ Svi grafici se nalaze u `results/plots_full/`:
 
 ---
 
-## 🗂️ Struktura projekta
+##  Struktura projekta
 
 ```
 Garbage-Classification/
@@ -164,7 +164,7 @@ Garbage-Classification/
 
 ---
 
-## 🚀 Pokretanje
+##  Pokretanje
 
 ### 1. Kloniranje repozitorijuma
 
@@ -262,7 +262,7 @@ docker rm garbage-app
 
 ---
 
-## 🛠️ Tehnologije
+##  Tehnologije
 
 - **Python 3.12**
 - **PyTorch 2.x** + **torchvision** – neuronske mreže
@@ -275,7 +275,7 @@ docker rm garbage-app
 
 ---
 
-## 📁 Eksperimenti
+##  Eksperimenti
 
 Definisano je 5 konfiguracija u `src/experiment_utils.py`:
 
@@ -284,37 +284,28 @@ Definisano je 5 konfiguracija u `src/experiment_utils.py`:
 | `baseline` | Osnovna konfiguracija (30 epoha) |
 | `larger_model` | Veći model sa filterima [64, 128, 256, 512] |
 | `high_dropout` | Dropout = 0.7 |
-| `no_augmentation` | Bez augmentacije podataka ⭐ |
+| `no_augmentation` | **Bez augmentacije podataka**  |
 | `higher_lr` | Learning rate = 0.005 |
 
 Rezultati se čuvaju u `results/all_experiments.json` i MLflow bazi.
 
 ---
 
-## 📸 Screenshot-ovi
+##  Screenshot-ovi
 
 Screenshot-ovi aplikacije i MLflow interfejsa nalaze se u folderu `screenshots/`:
-- `app_upload.png` – Streamlit početni ekran
-- `app_result.png` – Streamlit rezultat predikcije
+- `app_upload.png` –  početni ekran
+- `app_result.png` –  rezultat predikcije
 - `docker_running.png` – Docker kontejner aktivan
 - `mlflow_compare.png` – MLflow poređenje eksperimenata
 - `mlflow_best_run.png` – MLflow najbolji run
 
----
 
-## 📝 Licenca
-
-Projekat je razvijen u okviru seminarskog rada i namenjen je edukativnim svrhama.
 
 ---
 
-## 👤 Autor
-
-**Nikola Djurković**  
+ 
 GitHub: [@nikolartn-it](https://github.com/nikolartn-it)
 
 ---
 
-## 🙏 Zahvalnica
-
-Zahvaljujem se profesoru i asistentima na predmetu *Veštačka inteligencija sa primenama* na Fakultetu tehničkih nauka u Čačku na korisnim smernicama tokom izrade ovog rada.
