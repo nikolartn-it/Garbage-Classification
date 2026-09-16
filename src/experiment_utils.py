@@ -2,141 +2,87 @@
 Utility funkcije za logovanje eksperimenata.
 """
 
-import csv
 import json
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 import pandas as pd
-import torch
 
 
 class ExperimentLogger:
     """
-    Logger za pracenje eksperimenata.
+    Logger za pracenje jednog eksperimenta.
     
-    Loguje:
-    - Hiperparametre
-    - Metrike po epohama
-    - Konfiguraciju modela
-    - Vreme trajanja
+    Cuva:
+    - config.json (konfiguracija)
+    - history.csv (metrike po epohama)
+    - results.json (konacni rezultati)
     """
-    
-    def __init__(
-        self,
-        experiment_name: str,
-        config: Dict[str, Any],
-        logs_dir: Path,
-    ):
+
+    def __init__(self, experiment_name: str, log_dir: str = "logs"):
         self.experiment_name = experiment_name
-        self.config = config
-        self.logs_dir = logs_dir / experiment_name
-        self.logs_dir.mkdir(parents=True, exist_ok=True)
-        
-        # Istorija metrika
-        self.history = {
-            "train_loss": [],
-            "train_acc": [],
-            "val_loss": [],
-            "val_acc": [],
-        }
-        
-        # Vreme pocetka
+        self.log_dir = Path(log_dir) / experiment_name
+        self.log_dir.mkdir(parents=True, exist_ok=True)
         self.start_time = datetime.now()
-        
-        # Cuvanje konfiguracije
-        self._save_config()
-    
-    def _save_config(self) -> None:
+        self.config = None
+
+    def save_config(self, config: Dict[str, Any]) -> None:
         """Cuva konfiguraciju eksperimenta."""
-        config_path = self.logs_dir / "config.json"
-        with open(config_path, "w") as f:
-            json.dump(self.config, f, indent=2)
-    
-    def log_epoch(
-        self,
-        epoch: int,
-        train_loss: float,
-        train_acc: float,
-        val_loss: float,
-        val_acc: float,
-    ) -> None:
-        """Loguje jednu epohu."""
-        self.history["train_loss"].append(train_loss)
-        self.history["train_acc"].append(train_acc)
-        self.history["val_loss"].append(val_loss)
-        self.history["val_acc"].append(val_acc)
-        
-        # Cuvanje u CSV
-        self._save_history()
-    
-    def _save_history(self) -> None:
-        """Cuva istoriju treninga u CSV."""
-        history_df = pd.DataFrame(self.history)
-        history_df.to_csv(self.logs_dir / "history.csv", index=False)
-    
-    def save_model(
-        self,
-        model: torch.nn.Module,
-        epoch: int,
-        val_acc: float,
-    ) -> None:
-        """Cuva model."""
-        model_path = self.logs_dir / f"model_epoch_{epoch}_acc_{val_acc:.4f}.pth"
-        torch.save({
-            "epoch": epoch,
-            "model_state_dict": model.state_dict(),
-            "val_acc": val_acc,
-            "config": self.config,
-        }, model_path)
-    
-    def save_results(self, test_results: Dict[str, Any]) -> None:
-        """Cuva konacne rezultate."""
-        results = {
+        self.config = config
+        config_path = self.log_dir / "config.json"
+        with open(config_path, "w", encoding="utf-8") as f:
+            json.dump(config, f, indent=2, ensure_ascii=False)
+
+    def save_history(self, history: Dict[str, List[float]]) -> None:
+        """Cuva istoriju treninga (po epohama) u CSV."""
+        history_df = pd.DataFrame(history)
+        history_df.to_csv(self.log_dir / "history.csv", index=False)
+
+    def save_results(self, result: Dict[str, Any]) -> None:
+        """Cuva konacne rezultate eksperimenta."""
+        # Sacuvaj config odvojeno ako postoji u result-u
+        if "config" in result and self.config is None:
+            self.save_config(result["config"])
+
+        # Sacuvaj history ako postoji
+        if "history" in result:
+            self.save_history(result["history"])
+
+        # Sacuvaj rezultate
+        results_with_meta = {
             "experiment_name": self.experiment_name,
-            "config": self.config,
-            "history": self.history,
-            "test_results": test_results,
-            "duration": str(datetime.now() - self.start_time),
             "timestamp": datetime.now().isoformat(),
+            "duration_seconds": (datetime.now() - self.start_time).total_seconds(),
+            **{k: v for k, v in result.items() if k != "config"},
         }
-        
-        with open(self.logs_dir / "results.json", "w") as f:
-            json.dump(results, f, indent=2)
-    
-    def get_best_val_acc(self) -> float:
-        """Vraca najbolju validation accuracy."""
-        return max(self.history["val_acc"]) if self.history["val_acc"] else 0.0
+
+        with open(self.log_dir / "results.json", "w", encoding="utf-8") as f:
+            json.dump(results_with_meta, f, indent=2, ensure_ascii=False)
 
 
 def create_experiment_configs() -> List[Dict[str, Any]]:
     """
     Kreira 5 razlicitih konfiguracija za eksperimente.
-    
-    Returns:
-        List of config dictionaries
     """
     configs = [
-        {
-            "name": "baseline",
-            "image_size": 224,
-            "batch_size": 32,
-            "learning_rate": 1e-3,
-            "weight_decay": 1e-4,
-            "num_epochs": 30,
-            "model": "cnn_baseline",
-            "augmentation": True,
-            "dropout": 0.5,
-        },
+       # {
+       #     "name": "baseline",
+       #     "image_size": 224,
+       #     "batch_size": 32,
+       #     "learning_rate": 1e-3,
+       #     "weight_decay": 1e-4,
+       #     "num_epochs": 30,
+       #     "augmentation": True,
+       #     "dropout": 0.5,
+       # },
         {
             "name": "larger_model",
             "image_size": 224,
             "batch_size": 32,
             "learning_rate": 1e-3,
             "weight_decay": 1e-4,
-            "num_epochs": 30,
-            "model": "cnn_large",
+            "num_epochs": 15,
             "augmentation": True,
             "dropout": 0.5,
             "filters": [64, 128, 256, 512],
@@ -147,8 +93,7 @@ def create_experiment_configs() -> List[Dict[str, Any]]:
             "batch_size": 32,
             "learning_rate": 1e-3,
             "weight_decay": 1e-4,
-            "num_epochs": 30,
-            "model": "cnn_baseline",
+            "num_epochs": 15,
             "augmentation": True,
             "dropout": 0.7,
         },
@@ -158,8 +103,7 @@ def create_experiment_configs() -> List[Dict[str, Any]]:
             "batch_size": 32,
             "learning_rate": 1e-3,
             "weight_decay": 1e-4,
-            "num_epochs": 30,
-            "model": "cnn_baseline",
+            "num_epochs": 15,
             "augmentation": False,
             "dropout": 0.5,
         },
@@ -169,39 +113,9 @@ def create_experiment_configs() -> List[Dict[str, Any]]:
             "batch_size": 32,
             "learning_rate": 5e-3,
             "weight_decay": 1e-4,
-            "num_epochs": 30,
-            "model": "cnn_baseline",
+            "num_epochs": 15,
             "augmentation": True,
             "dropout": 0.5,
         },
     ]
-    
     return configs
-
-
-def save_experiment_results(
-    results: Dict[str, Any],
-    output_dir: Path,
-) -> None:
-    """
-    Cuva rezultate svih eksperimenata u jedan CSV fajl.
-    """
-    output_dir.mkdir(parents=True, exist_ok=True)
-    
-    rows = []
-    for exp_name, exp_data in results.items():
-        row = {
-            "experiment": exp_name,
-            "best_val_acc": exp_data.get("best_val_acc", 0),
-            "test_acc": exp_data.get("test_acc", 0),
-            "test_loss": exp_data.get("test_loss", 0),
-            "duration": exp_data.get("duration", ""),
-        }
-        # Dodaj hiperparametre
-        for key, value in exp_data.get("config", {}).items():
-            row[f"config_{key}"] = value
-        rows.append(row)
-    
-    df = pd.DataFrame(rows)
-    df.to_csv(output_dir / "all_experiments.csv", index=False)
-    print(f"✓ Results saved to {output_dir / 'all_experiments.csv'}")
