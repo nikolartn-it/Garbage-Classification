@@ -20,7 +20,7 @@ Klase koje model prepoznaje: `cardboard`, `glass`, `metal`, `paper`, `plastic`, 
 
 ---
 
-## 📊 Dataset
+##  Dataset
 
 Korišćen je **Garbage Classification** dataset sa [Kaggle](https://www.kaggle.com/datasets/asdasdasasdas/garbage-classification) platforme.
 
